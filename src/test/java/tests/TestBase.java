@@ -20,7 +20,6 @@ import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 public class TestBase extends TestData {
-
     @BeforeAll
     static void setupConfiguration() {
         Configuration.baseUrl = "https://demoqa.com";
@@ -33,6 +32,10 @@ public class TestBase extends TestData {
                 "enableVideo", true
         ));
         Configuration.browserCapabilities = capabilities;
+        Configuration.browserSize = System.getProperty("browserSize", "1920x1080");
+        Configuration.browser = System.getProperty("browserName", "chrome");
+        Configuration.remote = System.getProperty("remoteUrl");
+        Configuration.browserVersion = System.getProperty("browserVersion");
     }
     @BeforeEach
     void preconditionConfiguration() {
