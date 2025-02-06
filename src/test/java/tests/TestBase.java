@@ -22,7 +22,7 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 public class TestBase extends TestData {
 
     @BeforeAll
-    static void setup() {
+    static void setupConfiguration() {
         Configuration.baseUrl = "https://demoqa.com";
         RestAssured.baseURI = "https://demoqa.com";
         RestAssured.defaultParser = Parser.JSON;
@@ -35,11 +35,11 @@ public class TestBase extends TestData {
         Configuration.browserCapabilities = capabilities;
     }
     @BeforeEach
-    void precondition() {
+    void preconditionConfiguration() {
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide());
     }
     @AfterEach
-    void shutDown() {
+    void tearDown() {
         Attach.screenshotAs("Last screenshot");
         Attach.pageSource();
         Attach.browserConsoleLogs();
