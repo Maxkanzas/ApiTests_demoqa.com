@@ -8,5 +8,5 @@ import java.util.List;
 @Data
 public class AddBookRequestBodyModel {
     private final String userId;
-    private final List<Isbn> CollectionOfIsbns;
+    private final List<Isbn> collectionOfIsbns;
 }

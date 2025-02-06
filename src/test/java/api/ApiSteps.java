@@ -1,45 +1,58 @@
 package api;
 
 import io.qameta.allure.Step;
-import io.restassured.response.Response;
 import models.books.AddBookRequestBodyModel;
 import models.login.LoginRequestBodyModel;
+import models.login.LoginResponseBodyModel;
+import org.openqa.selenium.Cookie;
 
+import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static io.restassured.RestAssured.given;
+import static specs.BookSpec.addBookResponseSpecification;
+import static specs.BookSpec.deleteBookResponseSpecification;
 import static specs.LoginSpec.*;
 
 public class ApiSteps {
     @Step("Авторизоваться в книжном магазине")
-    public static Response login(String userName, String password) {
-        LoginRequestBodyModel authData = new LoginRequestBodyModel(userName, password);
-        Response authResponse = given(loginRequestSpecification)
-                .body(authData)
+    public static LoginResponseBodyModel login(LoginRequestBodyModel loginRequestBodyModel) {
+        return given(loginRequestSpecification)
+                .body(loginRequestBodyModel)
                 .when().post("/Account/v1/Login")
                 .then().spec(loginResponseSpecification)
-                .extract().response();
-        return authResponse;
+                .extract().as(LoginResponseBodyModel.class);
     }
-
-
-    @Step("Очистить список книг пользователя")
-    public static Response clearListOfUserBooks(String token, String userId) {
-        Response deletionResponse = given(loginRequestSpecification)
-                .header("Authorization", "Bearer " + token)
-                .queryParams("UserId", userId)
+    @Step("Удалить все книги из корзины")
+    public void deleteAllBooks(LoginResponseBodyModel loginResponse) {
+         given(loginRequestSpecification)
+                .header("Authorization", "Bearer " + loginResponse.getToken())
+                .queryParams("UserId", loginResponse.getUserId())
                 .when().delete("/BookStore/v1/Books")
+                .then().spec(deleteBookResponseSpecification);
+    }
+    @Step("Удалить одну книгу из корзины")
+    public void deleteOneBook(LoginResponseBodyModel loginResponse) {
+         given(loginRequestSpecification)
+                .header("Authorization", "Bearer " + loginResponse.getToken())
+                .queryParams("UserId", loginResponse.getUserId())
+                .when().delete("/BookStore/v1/Book")
                 .then().spec(deleteBookResponseSpecification)
                 .extract().response();
-        return deletionResponse;
     }
-
-    @Step("Добавить список книг по ISBN")
-    public static void addBooks(String token, AddBookRequestBodyModel bookData) {
+    @Step("Добавить в список книгу по ISBN")
+    public void addBooks(LoginResponseBodyModel loginResponse, AddBookRequestBodyModel bookData) {
         given(loginRequestSpecification)
-                .header("Authorization", "Bearer " + token)
+                .header("Authorization", "Bearer " + loginResponse.getToken())
                 .body(bookData)
                 .when()
                 .post("/BookStore/v1/Books")
                 .then()
                 .spec(addBookResponseSpecification);
+    }
+    public void setCookies(LoginResponseBodyModel loginResponse) {
+        open("/favicon.ico"); // Открытие страницы для установки cookies
+        getWebDriver().manage().addCookie(new Cookie("userID", loginResponse.getUserId()));
+        getWebDriver().manage().addCookie(new Cookie("expires", loginResponse.getExpires()));
+        getWebDriver().manage().addCookie(new Cookie("token", loginResponse.getToken()));
     }
 }

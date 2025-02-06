@@ -13,24 +13,13 @@ import static io.restassured.http.ContentType.JSON;
 public class LoginSpec {
 
     public static RequestSpecification loginRequestSpecification = with()
-            .filter(withCustomTemplates())
-            .contentType(JSON)
-            .log().all();
+            .log().uri()
+            .log().method()
+            .log().body()
+            .contentType(JSON);
 
     public static ResponseSpecification loginResponseSpecification = new ResponseSpecBuilder()
             .expectStatusCode(200)
-            .log(STATUS)
-            .log(BODY)
-            .build();
-
-    public static ResponseSpecification deleteBookResponseSpecification = new ResponseSpecBuilder()
-            .expectStatusCode(204)
-            .log(STATUS)
-            .log(BODY)
-            .build();
-
-    public static ResponseSpecification addBookResponseSpecification = new ResponseSpecBuilder()
-            .expectStatusCode(201)
             .log(STATUS)
             .log(BODY)
             .build();
