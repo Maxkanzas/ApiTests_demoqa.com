@@ -26,6 +26,7 @@ public class BookStoreTestsOptimized extends TestBase {
     ApiSteps apiSteps = new ApiSteps();
     ProfilePage profilePage = new ProfilePage();
     LoginResponseBodyModel loginResponse;
+    AddBookRequestBodyModel bookData;
 
     @DisplayName("Авторизация, добавление одной книги и удаление всех книг")
     @Test
@@ -38,7 +39,7 @@ public class BookStoreTestsOptimized extends TestBase {
         });
         step("Добавление книги в корзину", () -> {
             Isbn isbn = new Isbn("9781449365035");
-            AddBookRequestBodyModel bookData = new AddBookRequestBodyModel(loginResponse.getUserId(), List.of(isbn));
+            bookData = new AddBookRequestBodyModel(loginResponse.getUserId(), List.of(isbn));
             apiSteps.addBooks(loginResponse, bookData);
         });
         step("Проверка книги в корзине", () -> {
@@ -62,7 +63,7 @@ public class BookStoreTestsOptimized extends TestBase {
         step("Добавление книги в корзину", () -> {
             Isbn firstBook = new Isbn("9781449365035"); // Первая книга
             Isbn secondBook = new Isbn("9781491904244"); // Вторая книга
-            AddBookRequestBodyModel bookData = new AddBookRequestBodyModel(loginResponse.getUserId(), Arrays.asList(firstBook, secondBook));
+            bookData = new AddBookRequestBodyModel(loginResponse.getUserId(), Arrays.asList(firstBook, secondBook));
             apiSteps.addBooks(loginResponse, bookData);
         });
         step("Проверка книги в корзине", () -> {
