@@ -20,6 +20,9 @@ import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 public class TestBase extends TestData {
+    public static final String demoqaLogin = System.getProperty("demoqaLogin");
+    public static final String demoqaPassword = System.getProperty("demoqaPassword");
+
     @BeforeAll
     static void setupConfiguration() {
         Configuration.baseUrl = "https://demoqa.com";

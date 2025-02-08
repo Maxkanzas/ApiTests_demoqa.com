@@ -9,8 +9,7 @@ import org.openqa.selenium.Cookie;
 import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static io.restassured.RestAssured.given;
-import static specs.BookSpec.addBookResponseSpecification;
-import static specs.BookSpec.deleteBookResponseSpecification;
+import static specs.BookSpec.*;
 import static specs.LoginSpec.*;
 
 public class ApiSteps {
@@ -24,24 +23,24 @@ public class ApiSteps {
     }
     @Step("Удалить все книги из корзины")
     public void deleteAllBooks(LoginResponseBodyModel loginResponse) {
-         given(loginRequestSpecification)
+         given(deleteBookRequestSpecification)
                 .header("Authorization", "Bearer " + loginResponse.getToken())
                 .queryParams("UserId", loginResponse.getUserId())
                 .when().delete("/BookStore/v1/Books")
                 .then().spec(deleteBookResponseSpecification);
     }
     @Step("Удалить одну книгу из корзины")
-    public void deleteOneBook(LoginResponseBodyModel loginResponse) {
-         given(loginRequestSpecification)
+    public void deleteOneBook(LoginResponseBodyModel loginResponse, String isbn) {
+         given(deleteBookRequestSpecification)
                 .header("Authorization", "Bearer " + loginResponse.getToken())
-                .queryParams("UserId", loginResponse.getUserId())
+//                .queryParams("UserId", loginResponse.getUserId())
+                .body("{ \"isbn\": \"" + isbn + "\", \"userId\": \"" + loginResponse.getUserId() + "\" }")
                 .when().delete("/BookStore/v1/Book")
-                .then().spec(deleteBookResponseSpecification)
-                .extract().response();
+                .then().spec(deleteBookResponseSpecification);
     }
     @Step("Добавить в список книгу по ISBN")
     public void addBooks(LoginResponseBodyModel loginResponse, AddBookRequestBodyModel bookData) {
-        given(loginRequestSpecification)
+        given(addBookRequestSpecification)
                 .header("Authorization", "Bearer " + loginResponse.getToken())
                 .body(bookData)
                 .when()

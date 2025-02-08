@@ -25,8 +25,7 @@ import static org.openqa.selenium.devtools.v85.network.Network.setCookies;
 public class BookStoreTestsOptimized extends TestBase {
     ApiSteps apiSteps = new ApiSteps();
     ProfilePage profilePage = new ProfilePage();
-    LoginResponseBodyModel loginResponse;
-    AddBookRequestBodyModel bookData;
+    LoginResponseBodyModel loginResponse = new LoginResponseBodyModel();
 
     @DisplayName("Авторизация, добавление одной книги и удаление всех книг")
     @Test
@@ -39,7 +38,7 @@ public class BookStoreTestsOptimized extends TestBase {
         });
         step("Добавление книги в корзину", () -> {
             Isbn isbn = new Isbn("9781449365035");
-            bookData = new AddBookRequestBodyModel(loginResponse.getUserId(), List.of(isbn));
+            AddBookRequestBodyModel bookData = new AddBookRequestBodyModel(loginResponse.getUserId(), List.of(isbn));
             apiSteps.addBooks(loginResponse, bookData);
         });
         step("Проверка книги в корзине", () -> {
@@ -61,18 +60,22 @@ public class BookStoreTestsOptimized extends TestBase {
             apiSteps.deleteAllBooks(loginResponse);
         });
         step("Добавление книги в корзину", () -> {
-            Isbn firstBook = new Isbn("9781449365035"); // Первая книга
-            Isbn secondBook = new Isbn("9781491904244"); // Вторая книга
-            bookData = new AddBookRequestBodyModel(loginResponse.getUserId(), Arrays.asList(firstBook, secondBook));
+            Isbn firstBook = new Isbn("9781449365035");
+            Isbn secondBook = new Isbn("9781491904244");
+            AddBookRequestBodyModel bookData = new AddBookRequestBodyModel(loginResponse.getUserId(), Arrays.asList(firstBook, secondBook));
             apiSteps.addBooks(loginResponse, bookData);
         });
-        step("Проверка книги в корзине", () -> {
+        step("Проверка книг в корзине", () -> {
             apiSteps.setCookies(loginResponse);
             profilePage.checkBooksInCollection();
         });
-        step("Удаление всех книг из корзины", () -> {
-            apiSteps.deleteAllBooks(loginResponse);
-            profilePage.checkEmptyBookInCollection();
+        step("Удаление одной книги из корзины", () -> {
+            apiSteps.deleteOneBook(loginResponse, "9781491904244");
+            profilePage.checkBookInCollection();
+        });
+        step("Проверка книги в корзине", () -> {
+            apiSteps.setCookies(loginResponse);
+            profilePage.checkBookInCollection();
         });
     }
     @DisplayName("Авторизация и удаление всех книг")
@@ -83,6 +86,10 @@ public class BookStoreTestsOptimized extends TestBase {
         });
         step("Удаление всех книг перед началом теста", () -> {
             apiSteps.deleteAllBooks(loginResponse);
+        });
+        step("Проверка книг в корзине", () -> {
+            apiSteps.setCookies(loginResponse);
+            profilePage.checkEmptyBookInCollection();
         });
     }
 }
