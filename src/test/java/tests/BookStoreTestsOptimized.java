@@ -10,6 +10,7 @@ import models.login.LoginResponseBodyModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
 import page.ProfilePage;
 
 import java.util.Arrays;
